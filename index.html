@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Resgate da Tuga</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+        
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #050510;
+            font-family: 'Cinzel', serif;
+            color: white;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        #game-container {
+            width: 800px;
+            height: 600px;
+            position: relative;
+            overflow: hidden;
+            border: 5px solid #d4af37;
+            border-radius: 15px;
+            background-color: #000;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 0 20px #d4af37;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.75);
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .active {
+            display: flex;
+        }
+
+        h1 { color: #d4af37; font-size: 36px; margin-bottom: 10px; }
+        p { font-size: 20px; max-width: 600px; line-height: 1.5; }
+
+        input, button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            border: none;
+        }
+
+        button {
+            background-color: #d4af37;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin: 10px;
+        }
+
+        button:hover { background-color: #f1c40f; transform: scale(1.05); }
+
+        #fefe-player {
+            position: absolute;
+            font-size: 50px;
+            left: 50px;
+            top: 250px;
+            display: none;
+            z-index: 10;
+        }
+
+        .owl {
+            position: absolute;
+            font-size: 40px;
+            z-index: 9;
+        }
+
+        .options-container { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    
+    <div id="fefe-player">🧙‍♂️🧹</div>
+
+    <div id="screen-intro" class="screen active">
+        <h1>O Resgate de Tuga</h1>
+        <p>Atenção, bruxo Fefe! Uma terrível magia das trevas foi lançada por um bruxo rival. Sua namorada, Tuga, foi capturada e aprisionada sob um feitiço poderoso.</p>
+        <p>Apenas você pode salvá-la usando sua magia e suas memórias. Prepare sua varinha (e sua vassoura).</p>
+        <button onclick="goToCastle()">Iniciar Jornada</button>
+    </div>
+
+    <div id="screen-castle" class="screen">
+        <h1>Os Portões de Hogwarts</h1>
+        <p>Você chegou ao castelo. O portão está selado com magia antiga. Para entrar, você deve provar o poder do seu vínculo com Tuga.</p>
+        <p style="color: #a8dadc; font-style: italic;">Dica mágica: O início de uma história - DD/MM/AAA</p>
+        <input type="text" id="password" placeholder="Digite a data..." autocomplete="off">
+        <button onclick="checkPassword()">Lançar Feitiço (Alohomora)</button>
+        <p id="password-error" style="color: #e63946; display: none;">Acesso negado. Tente novamente.</p>
+    </div>
+
+    <div id="screen-arena-intro" class="screen">
+        <h1>Arena de Quadribol</h1>
+        <p>Os portões se abriram! Mas os céus estão infestados de corujas enfeitiçadas pelo inimigo.</p>
+        <p><strong>Controles:</strong> Use a SETA PARA CIMA (↑) e a SETA PARA BAIXO (↓) do teclado para voar com sua vassoura e desviar das corujas.</p>
+        <button onclick="startMinigame()">Montar na Vassoura</button>
+    </div>
+
+    <div id="screen-choice" class="screen">
+        <h1>Um encontro inesperado...</h1>
+        <div style="font-size: 60px; margin-bottom: 10px;">👩🏻‍🏫</div>
+        <p>Após desviar das corujas, uma mulher de cabelos pretos e óculos aparece flutuando em sua direção.</p>
+        <p>O que você faz?</p>
+        <div class="options-container">
+            <button onclick="makeChoice(1)">Ignorar essa mulher e seguir em frente</button>
+            <button onclick="makeChoice(2)">Dizer: "opa! tudo bem?"</button>
+        </div>
+    </div>
+
+    <div id="screen-dining" class="screen">
+        <h1>O Grande Salão</h1>
+        <p id="quiz-msg" style="color: #f1c40f;">Dr Fefe, só você pode salvar a tuga! Responda as perguntas de forma correta para quebrar o feitiço.</p>
+        
+        <div id="quiz-q1">
+            <p><strong>Pergunta 1:</strong> Qual a comida favorita da Tuga?</p>
+            <button onclick="checkQ1(1)">Vegetais</button>
+            <button onclick="checkQ1(2)">Pamonha</button>
+            <button onclick="checkQ1(3)">Frutas</button>
+        </div>
+
+        <div id="quiz-q2" style="display: none;">
+            <p><strong>Pergunta 2:</strong> Qual o local do primeiro date?</p>
+            <button onclick="checkQ2(1)">Outback</button>
+            <button onclick="checkQ2(2)">Rua</button>
+            <button onclick="checkQ2(3)">Boate</button>
+        </div>
+    </div>
+
+    <div id="screen-win" class="screen">
+        <div style="font-size: 80px; margin-bottom: 10px;">🧙‍♂️❤️🧚‍♀️</div>
+        <h1>Feitiço Quebrado!</h1>
+        <p>Você provou que o amor é a magia mais poderosa de todas.</p>
+        <p>Tuga está a salvo! Parabéns, Dr. Fefe!</p>
+    </div>
+
+</div>
+
+<script>
+    const container = document.getElementById('game-container');
+    const player = document.getElementById('fefe-player');
+    
+    // Controles de Jogo
+    let playerY = 250;
+    let isPlaying = false;
+    let owlsDodged = 0;
+    let owlInterval;
+    let gameLoop;
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        if(id) document.getElementById(id).classList.add('active');
+    }
+
+    function goToCastle() {
+        container.style.backgroundImage = "url('castelo.png')";
+        showScreen('screen-castle');
+    }
+
+    function checkPassword() {
+        const pass = document.getElementById('password').value.trim();
+        if(pass === '07/02/2025') {
+            container.style.backgroundImage = "url('arena.png')";
+            showScreen('screen-arena-intro');
+        } else {
+            document.getElementById('password-error').style.display = 'block';
+        }
+    }
+
+    function startMinigame() {
+        showScreen(null); // Esconde todas as telas
+        player.style.display = 'block';
+        isPlaying = true;
+        owlsDodged = 0;
+        playerY = 250;
+        player.style.top = playerY + 'px';
+
+        document.addEventListener('keydown', movePlayer);
+
+        owlInterval = setInterval(spawnOwl, 1200);
+        gameLoop = requestAnimationFrame(updateMinigame);
+    }
+
+    function movePlayer(e) {
+        if (!isPlaying) return;
+        if (e.key === 'ArrowUp') playerY -= 40;
+        if (e.key === 'ArrowDown') playerY += 40;
+        
+        // Limites da tela
+        if (playerY < 0) playerY = 0;
+        if (playerY > 530) playerY = 530;
+        player.style.top = playerY + 'px';
+    }
+
+    function spawnOwl() {
+        if (!isPlaying) return;
+        const owl = document.createElement('div');
+        owl.innerText = '🦉';
+        owl.className = 'owl';
+        owl.style.left = '800px';
+        owl.style.top = Math.floor(Math.random() * 500) + 20 + 'px';
+        container.appendChild(owl);
+    }
+
+    function updateMinigame() {
+        if (!isPlaying) return;
+
+        const owls = document.querySelectorAll('.owl');
+        owls.forEach(owl => {
+            let left = parseInt(owl.style.left);
+            left -= 5; // Velocidade da coruja
+            owl.style.left = left + 'px';
+
+            // Colisão (caixas simples)
+            const playerRect = player.getBoundingClientRect();
+            const owlRect = owl.getBoundingClientRect();
+
+            if (
+                playerRect.left < owlRect.right - 20 &&
+                playerRect.right > owlRect.left + 20 &&
+                playerRect.top < owlRect.bottom - 20 &&
+                playerRect.bottom > owlRect.top + 20
+            ) {
+                // Bateu
+                gameOverMinigame("Você foi atingido por uma coruja! Tente novamente.");
+            }
+
+            if (left < -50) {
+                owl.remove();
+                owlsDodged++;
+                if (owlsDodged >= 6) { // Passa de fase após 6 corujas
+                    winMinigame();
+                }
+            }
+        });
+
+        requestAnimationFrame(updateMinigame);
+    }
+
+    function gameOverMinigame(msg) {
+        isPlaying = false;
+        clearInterval(owlInterval);
+        document.querySelectorAll('.owl').forEach(o => o.remove());
+        player.style.display = 'none';
+        alert(msg);
+        showScreen('screen-arena-intro'); // Reinicia minigame
+    }
+
+    function winMinigame() {
+        isPlaying = false;
+        clearInterval(owlInterval);
+        document.querySelectorAll('.owl').forEach(o => o.remove());
+        player.style.display = 'none';
+        document.removeEventListener('keydown', movePlayer);
+        showScreen('screen-choice');
+    }
+
+    function makeChoice(op) {
+        if (op === 2) {
+            alert("Por que está falando com essa mulher? Deveria estar procurando a Tuga!");
+            // Reinicia o jogo do zero
+            location.reload(); 
+        } else {
+            // Vai para o refeitório
+            container.style.backgroundImage = "url('refeitorio.png')";
+            showScreen('screen-dining');
+        }
+    }
+
+    function checkQ1(answer) {
+        if (answer === 2) {
+            document.getElementById('quiz-q1').style.display = 'none';
+            document.getElementById('quiz-q2').style.display = 'block';
+        } else {
+            alert("Resposta errada! A magia te jogou para o início do refeitório.");
+        }
+    }
+
+    function checkQ2(answer) {
+        if (answer === 1) {
+            showScreen('screen-win');
+        } else {
+            alert("Resposta errada! A magia te jogou para o início do refeitório.");
+            document.getElementById('quiz-q2').style.display = 'none';
+            document.getElementById('quiz-q1').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
