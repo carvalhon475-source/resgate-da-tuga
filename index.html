@@ -76,13 +76,23 @@
 
         button:hover { background-color: #f1c40f; transform: scale(1.05); }
 
+        /* Estilo novo para o personagem com a foto */
         #fefe-player {
             position: absolute;
-            font-size: 50px;
             left: 50px;
             top: 250px;
             display: none;
             z-index: 10;
+            align-items: center;
+        }
+
+        .fefe-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #d4af37;
+            object-fit: cover;
+            box-shadow: 0 0 10px #d4af37;
         }
 
         .owl {
@@ -98,8 +108,13 @@
 
 <div id="game-container">
     
-    <div id="fefe-player">🧙‍♂️🧹</div>
+    <!-- Personagem no minigame (Foto + Vassoura) -->
+    <div id="fefe-player">
+        <img src="fefe.jpg" class="fefe-avatar" alt="Fefe">
+        <span style="font-size: 40px; margin-left: -10px;">🧹</span>
+    </div>
 
+    <!-- TELA 1: INTRODUÇÃO -->
     <div id="screen-intro" class="screen active">
         <h1>O Resgate de Tuga</h1>
         <p>Atenção, bruxo Fefe! Uma terrível magia das trevas foi lançada por um bruxo rival. Sua namorada, Tuga, foi capturada e aprisionada sob um feitiço poderoso.</p>
@@ -107,15 +122,17 @@
         <button onclick="goToCastle()">Iniciar Jornada</button>
     </div>
 
+    <!-- TELA 2: CASTELO (SENHA) -->
     <div id="screen-castle" class="screen">
         <h1>Os Portões de Hogwarts</h1>
         <p>Você chegou ao castelo. O portão está selado com magia antiga. Para entrar, você deve provar o poder do seu vínculo com Tuga.</p>
         <p style="color: #a8dadc; font-style: italic;">Dica mágica: O início de uma história - DD/MM/AAA</p>
         <input type="text" id="password" placeholder="Digite a data..." autocomplete="off">
         <button onclick="checkPassword()">Lançar Feitiço (Alohomora)</button>
-        <p id="password-error" style="color: #e63946; display: none;">Acesso negado. Tente novamente.</p>
+        <p id="password-error" style="color: #e63946; display: none;">Acesso negado. A magia rejeitou essa data.</p>
     </div>
 
+    <!-- TELA 3: INSTRUÇÕES ARENA -->
     <div id="screen-arena-intro" class="screen">
         <h1>Arena de Quadribol</h1>
         <p>Os portões se abriram! Mas os céus estão infestados de corujas enfeitiçadas pelo inimigo.</p>
@@ -123,6 +140,7 @@
         <button onclick="startMinigame()">Montar na Vassoura</button>
     </div>
 
+    <!-- TELA 4: ESCOLHA DA MULHER DE ÓCULOS -->
     <div id="screen-choice" class="screen">
         <h1>Um encontro inesperado...</h1>
         <div style="font-size: 60px; margin-bottom: 10px;">👩🏻‍🏫</div>
@@ -134,9 +152,10 @@
         </div>
     </div>
 
+    <!-- TELA 5: REFEITÓRIO (QUIZ) -->
     <div id="screen-dining" class="screen">
         <h1>O Grande Salão</h1>
-        <p id="quiz-msg" style="color: #f1c40f;">Dr Fefe, só você pode salvar a tuga! Responda as perguntas de forma correta para quebrar o feitiço.</p>
+        <p id="quiz-msg" style="color: #f1c40f;">Dr. Fefe, só você pode salvar a Tuga! Responda as perguntas de forma correta para quebrar o feitiço.</p>
         
         <div id="quiz-q1">
             <p><strong>Pergunta 1:</strong> Qual a comida favorita da Tuga?</p>
@@ -153,8 +172,12 @@
         </div>
     </div>
 
+    <!-- TELA 6: VITÓRIA -->
     <div id="screen-win" class="screen">
-        <div style="font-size: 80px; margin-bottom: 10px;">🧙‍♂️❤️🧚‍♀️</div>
+        <div style="margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <img src="fefe.jpg" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid #d4af37; object-fit: cover;" alt="Fefe">
+            <span style="font-size: 50px;">❤️🧚‍♀️</span>
+        </div>
         <h1>Feitiço Quebrado!</h1>
         <p>Você provou que o amor é a magia mais poderosa de todas.</p>
         <p>Tuga está a salvo! Parabéns, Dr. Fefe!</p>
@@ -179,13 +202,15 @@
     }
 
     function goToCastle() {
+        // Verifica se a imagem existe no repositório. O nome deve ser EXATAMENTE castelo.png
         container.style.backgroundImage = "url('castelo.png')";
         showScreen('screen-castle');
     }
 
     function checkPassword() {
         const pass = document.getElementById('password').value.trim();
-        if(pass === '07/02/2025') {
+        // SENHA ATUALIZADA AQUI:
+        if(pass === '07/06/2025') {
             container.style.backgroundImage = "url('arena.png')";
             showScreen('screen-arena-intro');
         } else {
@@ -194,8 +219,8 @@
     }
 
     function startMinigame() {
-        showScreen(null); // Esconde todas as telas
-        player.style.display = 'block';
+        showScreen(null); 
+        player.style.display = 'flex'; // Mudado para flex para alinhar foto e vassoura
         isPlaying = true;
         owlsDodged = 0;
         playerY = 250;
@@ -209,8 +234,8 @@
 
     function movePlayer(e) {
         if (!isPlaying) return;
-        if (e.key === 'ArrowUp') playerY -= 40;
-        if (e.key === 'ArrowDown') playerY += 40;
+        if (e.key === 'ArrowUp') playerY -= 45;
+        if (e.key === 'ArrowDown') playerY += 45;
         
         // Limites da tela
         if (playerY < 0) playerY = 0;
@@ -234,27 +259,26 @@
         const owls = document.querySelectorAll('.owl');
         owls.forEach(owl => {
             let left = parseInt(owl.style.left);
-            left -= 5; // Velocidade da coruja
+            left -= 5; 
             owl.style.left = left + 'px';
 
-            // Colisão (caixas simples)
             const playerRect = player.getBoundingClientRect();
             const owlRect = owl.getBoundingClientRect();
 
+            // Margem de colisão ajustada
             if (
-                playerRect.left < owlRect.right - 20 &&
-                playerRect.right > owlRect.left + 20 &&
-                playerRect.top < owlRect.bottom - 20 &&
-                playerRect.bottom > owlRect.top + 20
+                playerRect.left < owlRect.right - 25 &&
+                playerRect.right > owlRect.left + 25 &&
+                playerRect.top < owlRect.bottom - 25 &&
+                playerRect.bottom > owlRect.top + 25
             ) {
-                // Bateu
                 gameOverMinigame("Você foi atingido por uma coruja! Tente novamente.");
             }
 
             if (left < -50) {
                 owl.remove();
                 owlsDodged++;
-                if (owlsDodged >= 6) { // Passa de fase após 6 corujas
+                if (owlsDodged >= 6) { 
                     winMinigame();
                 }
             }
@@ -269,7 +293,7 @@
         document.querySelectorAll('.owl').forEach(o => o.remove());
         player.style.display = 'none';
         alert(msg);
-        showScreen('screen-arena-intro'); // Reinicia minigame
+        showScreen('screen-arena-intro'); 
     }
 
     function winMinigame() {
@@ -284,10 +308,8 @@
     function makeChoice(op) {
         if (op === 2) {
             alert("Por que está falando com essa mulher? Deveria estar procurando a Tuga!");
-            // Reinicia o jogo do zero
             location.reload(); 
         } else {
-            // Vai para o refeitório
             container.style.backgroundImage = "url('refeitorio.png')";
             showScreen('screen-dining');
         }
